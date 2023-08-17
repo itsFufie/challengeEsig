@@ -3,7 +3,29 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
-    <persistence-unit name="default">
+    <persistence-unit name="challengeEsig">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:/PostGreDS</jta-data-source>
+        <class>com.esig.challenge.model.Cargo</class>
+        <class>com.esig.challenge.model.Pessoa</class>
+        <class>com.esig.challenge.model.Vencimento</class>
+        <class>com.esig.challenge.model.CargoVencimento</class>
+        <class>com.esig.challenge.model.PessoaSalario</class>
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/challengeEsig"/>
+            <property name="jakarta.persistence.jdbc.user" value="master"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
+            <property name="jakarta.persistence.sql-load-script-source" value="initial-database/start.sql"/>
+
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
 
     </persistence-unit>
 </persistence>
