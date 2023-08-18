@@ -5,12 +5,12 @@ import com.esig.challenge.model.Pessoa;
 import com.esig.challenge.model.Vencimento;
 import com.esig.challenge.repository.*;
 import com.opencsv.CSVReader;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import com.esig.challenge.model.Cargo;
+
+import jakarta.inject.Inject;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,39 +18,27 @@ import java.net.URL;
 
 public class LoadOnStartUp implements ServletContextListener {
 
-
+    @Inject
     CargoRepository cargoRepository;
+    @Inject
     VencimentoRepository vencimentoRepository;
+    @Inject
     PessoaRepository pessoaRepository;
+    @Inject
     CargoVencimentoRepository cargoVencimentoRepository;
 
     public void contextInitialized(ServletContextEvent sce) {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("challengeEsig");
-        EntityManager em = emf.createEntityManager();
 
-        em.getTransaction().begin();
-
-        cargoRepository = new CargoRepository(em);
-        vencimentoRepository = new VencimentoRepository(em);
-        pessoaRepository = new PessoaRepository(em);
-        cargoVencimentoRepository = new CargoVencimentoRepository(em);
-
-
-        iniciarTabelaCargos(em);
-        iniciarTabelaVencimentos(em);
-        iniciarTabelaPessoas(em);
-        iniciarTabelaCargosVencimentos(em);
-
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-
+        iniciarTabelaCargos();
+        iniciarTabelaVencimentos();
+        iniciarTabelaPessoas();
+        iniciarTabelaCargosVencimentos();
 
     }
 
 
-    public void iniciarTabelaCargos(EntityManager em) {
+    public void iniciarTabelaCargos() {
 
         try {
             String resourceName = "/initial-database/Cargos.csv";
@@ -68,7 +56,7 @@ public class LoadOnStartUp implements ServletContextListener {
 
     }
 
-    public void iniciarTabelaVencimentos(EntityManager em) {
+    public void iniciarTabelaVencimentos() {
         try {
             String resourceName = "/initial-database/Vencimentos.csv";
             CSVReader csvReader = getCsvReader(resourceName);
@@ -86,7 +74,7 @@ public class LoadOnStartUp implements ServletContextListener {
         }
     }
 
-    public void iniciarTabelaPessoas(EntityManager em) {
+    public void iniciarTabelaPessoas() {
         try {
             String resourceName = "/initial-database/Pessoas.csv";
             CSVReader csvReader = getCsvReader(resourceName);
@@ -102,7 +90,10 @@ public class LoadOnStartUp implements ServletContextListener {
                 pessoa.setUsuario(nextLine[7]);
                 pessoa.setTelefone(nextLine[8]);
                 pessoa.setDataNascimento(nextLine[9]);
-                pessoa.setCargo(cargoRepository.readById(Long.valueOf(nextLine[10])));
+                Long id = obterLong(nextLine[10]);
+                if (id != null) {
+                    pessoa.setCargo(cargoRepository.readById(id));
+                }
                 pessoaRepository.save(pessoa);
             }
 
@@ -112,15 +103,15 @@ public class LoadOnStartUp implements ServletContextListener {
 
     }
 
-    public void iniciarTabelaCargosVencimentos(EntityManager em) {
+    public void iniciarTabelaCargosVencimentos() {
         try {
             String resourceName = "/initial-database/Cargo_Vencimentos.csv";
             CSVReader csvReader = getCsvReader(resourceName);
             String[] nextLine = csvReader.readNext();
             while ((nextLine = csvReader.readNext()) != null) {
                 CargoVencimento cargoVencimento = new CargoVencimento();
-                cargoVencimento.setCargo(cargoRepository.readById(Long.valueOf(nextLine[1])));
-                cargoVencimento.setVencimento(vencimentoRepository.readById(Long.valueOf(nextLine[2])));
+                cargoVencimento.setCargo(cargoRepository.readById(obterLong(nextLine[1])));
+                cargoVencimento.setVencimento(vencimentoRepository.readById(obterLong(nextLine[2])));
                 cargoVencimentoRepository.save(cargoVencimento);
             }
 
@@ -138,4 +129,12 @@ public class LoadOnStartUp implements ServletContextListener {
         return new CSVReader(fileReader);
     }
 
+    public Long obterLong(String valor) {
+        try {
+            return Long.valueOf(valor);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

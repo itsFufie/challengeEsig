@@ -1,17 +1,22 @@
 package com.esig.challenge.repository;
 
 import com.esig.challenge.model.Model;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
+
 import java.util.List;
+
 
 public abstract class AbstractRepository<T extends Model> implements Repository<T> {
 
+    @Inject
     EntityManager manager;
+
     Class<T> type;
 
     public AbstractRepository(EntityManager manager) {
