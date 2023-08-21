@@ -142,5 +142,6 @@ public class Pessoa implements Serializable, Model {
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
     }
+
 }
 

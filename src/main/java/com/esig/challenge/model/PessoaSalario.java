@@ -51,7 +51,7 @@ public class PessoaSalario implements Serializable, Model {
         if (this == o) return true;
         if (!(o instanceof PessoaSalario)) return false;
         PessoaSalario that = (PessoaSalario) o;
-        return Objects.equals(getId(), that.getId());
+        return Objects.equals(getPessoa(), that.getPessoa());
     }
 
     @Override

@@ -17,4 +17,6 @@ public class VencimentoRepository extends AbstractRepository<Vencimento> impleme
     public VencimentoRepository() {
         this.type = Vencimento.class;
     }
+
+
 }

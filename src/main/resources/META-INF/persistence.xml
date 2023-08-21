@@ -11,7 +11,7 @@
         <class>com.esig.challenge.model.Vencimento</class>
         <class>com.esig.challenge.model.CargoVencimento</class>
         <class>com.esig.challenge.model.PessoaSalario</class>
-
+        <class>com.esig.challenge.model.Migration</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/challengeEsig"/>
@@ -19,11 +19,8 @@
             <property name="jakarta.persistence.jdbc.password" value=""/>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
             <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
-
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.show_sql" value="true"/>
         </properties>
 
     </persistence-unit>

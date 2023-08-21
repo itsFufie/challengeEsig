@@ -1,12 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-<f:view>
-    <h:outputLabel value="Hello, world"/>
-    <h:outputLabel>#{}</h:outputLabel>
-</f:view>
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+    <h:outputStylesheet library="challengeEsig" name="styles.css"/>
+    <title> Minha Empresa </title>
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:commandButton actionListener="#{pessoasView.calcularSalarios}" value="Calcular Salarios"
+                         update="pessoaDataTable" styleClass="ui-button-raised"/>
+    </h:form>
+
+
+    <div class="div-data-table">
+        <p:dataTable id="pessoaDataTable" value="#{pessoasView.pessoas}" var="pessoa" rows="10" paginator="true"
+                     paginatorPosition="both"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {pageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                     rowsPerPageTemplate="10, 50, 100">
+
+            <f:facet name="header">
+                Lista de Funcionarios
+            </f:facet>
+
+            <p:column headerText="Nome">
+                <h:outputText value="#{pessoa.nome}"/>
+            </p:column>
+
+            <p:column headerText="Email">
+                <h:outputText value="#{pessoa.email}"/>
+            </p:column>
+
+            <p:column headerText="Telefone">
+                <h:outputText value="#{pessoa.telefone}"/>
+            </p:column>
+            <p:column headerText="Cargo">
+                <h:outputText value="#{pessoa.cargo.nomeCargo}"/>
+            </p:column>
+            <p:column headerText="Salario">
+                <h:outputText value="#{pessoasView.getSalario(pessoa)}"/>
+            </p:column>
+
+        </p:dataTable>
+    </div>
+
+</h:body>
 </html>

@@ -1,14 +1,11 @@
 package com.esig.challenge;
 
-import com.esig.challenge.model.CargoVencimento;
-import com.esig.challenge.model.Pessoa;
-import com.esig.challenge.model.Vencimento;
+import com.esig.challenge.model.*;
 import com.esig.challenge.repository.*;
 import com.opencsv.CSVReader;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import com.esig.challenge.model.Cargo;
 
 import jakarta.inject.Inject;
 
@@ -18,6 +15,8 @@ import java.net.URL;
 
 public class LoadOnStartUp implements ServletContextListener {
 
+    String nomeUnicoFreshDatabase = "freshDataBase";
+    Migration migration;
     @Inject
     CargoRepository cargoRepository;
     @Inject
@@ -26,15 +25,42 @@ public class LoadOnStartUp implements ServletContextListener {
     PessoaRepository pessoaRepository;
     @Inject
     CargoVencimentoRepository cargoVencimentoRepository;
+    @Inject
+    MigrationRepository migrationRepository;
 
     public void contextInitialized(ServletContextEvent sce) {
 
+        if (isFreshDatabase()) {
+            loadMigration();
+            iniciarTabelaCargos();
+            iniciarTabelaVencimentos();
+            iniciarTabelaPessoas();
+            iniciarTabelaCargosVencimentos();
+            markMigrationRan();
+        } else {
+            System.out.println("Database ja populada, pulando migration inicial!");
+        }
 
-        iniciarTabelaCargos();
-        iniciarTabelaVencimentos();
-        iniciarTabelaPessoas();
-        iniciarTabelaCargosVencimentos();
+    }
 
+    public boolean isFreshDatabase() {
+        migration = migrationRepository.findByNomeUnico(nomeUnicoFreshDatabase);
+        if (migration != null) {
+            return !migration.isRan();
+        }
+        return true;
+    }
+
+    public void loadMigration() {
+        migration = new Migration();
+        migration.setNomeUnico(nomeUnicoFreshDatabase);
+        migration.setRan(false);
+        migration = migrationRepository.save(migration);
+    }
+
+    public void markMigrationRan() {
+        migration.setRan(true);
+        migrationRepository.save(migration);
     }
 
 
