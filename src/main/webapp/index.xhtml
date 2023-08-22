@@ -67,6 +67,10 @@
             </p:panelGrid>
 
         </div>
+
+        <p:commandButton style="margin: 0 auto;" ajax="true" value="Recalcular Salarios"
+                         actionListener="#{pessoasView.recalcularSalarios}" update="form" process="form"
+                         immediate="true"/>
         <div class="div-data-table">
             <p:dataTable lazy="false" id="pessoaDataTable" value="#{pessoasView.pessoas}" var="pessoa" rows="10"
                          paginator="true" editable="true" rowEditMode=""

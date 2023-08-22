@@ -98,6 +98,10 @@ public class PessoasView implements Serializable {
         return cargos;
     }
 
+    public void recalcularSalarios() {
+        pessoaService.recalcularSalarios();
+    }
+
 
     public void deletar(Pessoa pessoa) {
         pessoaService.delete(pessoa);

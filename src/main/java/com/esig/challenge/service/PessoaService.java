@@ -5,6 +5,8 @@ import com.esig.challenge.repository.CargoVencimentoRepository;
 import com.esig.challenge.repository.PessoaRepository;
 import com.esig.challenge.repository.PessoaSalarioRepository;
 import com.esig.challenge.repository.VencimentoRepository;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 
 import java.io.Serializable;
@@ -56,6 +58,18 @@ public class PessoaService implements Serializable {
             recalcularSalario(pessoa);
         }
         System.out.println("Calculo finalizado");
+    }
+
+    public void recalcularSalarios() {
+        List<Pessoa> pessoas = readAll();
+        System.out.println("Iniciando calculo de salarios de: " + pessoas.size() + " funcionarios");
+        FacesMessage msg = new FacesMessage("Iniciando calculo de salarios, isto pode levar algum tempo...", String.valueOf(pessoas.size()));
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        for (Pessoa pessoa : pessoas) {
+            recalcularSalario(pessoa);
+        }
+        FacesMessage msg2 = new FacesMessage("Calculo finalizado", String.valueOf(pessoas.size()));
+        FacesContext.getCurrentInstance().addMessage(null, msg2);
     }
 
     public int getMaxResults() {
