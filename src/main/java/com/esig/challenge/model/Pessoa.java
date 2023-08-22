@@ -16,15 +16,21 @@ public class Pessoa implements Serializable, Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nome;
     private String cidade;
+    @Column(nullable = false)
     private String email;
     private String CEP;
     private String enderco;
+    @Column(nullable = false)
     private String pais;
+    @Column(nullable = false)
     private String usuario;
+    @Column(nullable = false)
     private String telefone;
-    @Column(name = "data_nascimento")
+    @Column(name = "data_nascimento", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date dataNascimento;
     @ManyToOne

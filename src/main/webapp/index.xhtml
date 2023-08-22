@@ -18,23 +18,81 @@
 <h:body>
     <h:form id="form">
         <p:growl id="dados" showDetail="true"/>
+
+        <div class="form-nova-pessoa card">
+            <p:panelGrid columns="6" layout="grid">
+                <f:facet name="header">
+                    <p:outputLabel value="Novo Cadastro"/>
+                </f:facet>
+                <p:outputLabel style="width: 10rem" value="Nome: " for="Nome"/>
+                <p:inputText style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.nome}" id="Nome"/>
+
+                <p:outputLabel style="width: 10rem" value="Email: " for="Email"/>
+                <p:inputText style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.email}" id="Email"/>
+
+                <p:outputLabel style="width: 10rem" value="Telefone: " for="Telefone"/>
+                <p:inputMask style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.telefone}"
+                             mask="(99)99999-9999" id="Telefone"/>
+
+                <p:outputLabel style="width: 10rem" value="Cidade: " for="Cidade"/>
+                <p:inputText style="width: 10rem" value="#{pessoasView.novaPessoa.cidade}" id="Cidade"/>
+
+                <p:outputLabel style="width: 10rem" value="CEP: " for="CEP"/>
+                <p:inputMask style="width: 10rem" value="#{pessoasView.novaPessoa.CEP}" mask="99999-999" size="9"
+                             minLength="9" maxlength="9" id="CEP"/>
+
+                <p:outputLabel style="width: 10rem" value="Endereço: " for="Endereco"/>
+                <p:inputText style="width: 10rem" value="#{pessoasView.novaPessoa.enderco}" id="Endereco"/>
+
+                <p:outputLabel style="width: 10rem" value="País: " for="Pais"/>
+                <p:inputText style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.pais}" id="Pais"/>
+
+                <p:outputLabel style="width: 10rem" value="Usuario: " for="Usuario"/>
+                <p:inputText style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.usuario}"
+                             id="Usuario"/>
+
+                <p:outputLabel style="width: 10rem" value="Data de Nascimento: " for="DataNascimento"/>
+                <p:calendar style="width: 10rem" required="true" value="#{pessoasView.novaPessoa.dataNascimento}"
+                            pattern="dd/MM/yyyy" id="DataNascimento">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:calendar>
+
+                <p:outputLabel value="Cargo: " for="Cargo"/>
+                <h:selectOneMenu id="Cargo" value="#{pessoasView.novaPessoa.cargo}">
+                    <f:selectItems value="#{pessoasView.cargos}" var="cargo" itemLabel="#{cargo.nomeCargo}"
+                                   itemValue="#{cargo}"/>
+                </h:selectOneMenu>
+                <p:commandButton value="Salvar" actionListener="#{pessoasView.salvar}" update="form" process="form"/>
+
+            </p:panelGrid>
+
+        </div>
         <div class="div-data-table">
             <p:dataTable lazy="false" id="pessoaDataTable" value="#{pessoasView.pessoas}" var="pessoa" rows="10"
                          paginator="true" editable="true" rowEditMode=""
                          paginatorPosition="both"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {pageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                         rowsPerPageTemplate="10, 50, 100">
+                         rowsPerPageTemplate="10, 50, 100"
+                         filteredValue="#{pessoasView.pessoasFiltro}"
+                         widgetVar="pessoasFiltro"
+                         globalFilterOnly="true"
+                         globalFilterFunction="#{pessoasView.globalFilterFunction}"
+            >
 
                 <p:ajax event="rowEdit" listener="#{pessoasView.onRowEdit}" update=":form:dados"/>
                 <f:facet name="header">
                     Lista de Funcionarios
+                    <div class="flex justify-content-end">
+                        <p:inputText id="globalFilter" onkeyup="PF('pessoasFiltro').filter()" style="width:300px"
+                                     placeholder="Search all fields using global function"/>
+                    </div>
                 </f:facet>
-                <p:column headerText="Id">
+                <p:column headerText="Id" style="width: 4rem">
                     <h:outputText converter="jakarta.faces.Long" value="#{pessoa.id}"/>
                 </p:column>
 
-                <p:column headerText="Nome">
+                <p:column headerText="Nome" style="width: 6rem">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{pessoa.nome}"/>
@@ -57,7 +115,7 @@
 
                 </p:column>
 
-                <p:column headerText="Telefone">
+                <p:column headerText="Telefone" style="width: 8rem;">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{pessoa.telefone}"/>
@@ -68,8 +126,55 @@
                     </p:cellEditor>
                 </p:column>
 
+                <p:column headerText="Cidade" style="width: 8rem">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.cidade}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="Cidade" value="#{pessoa.cidade}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
 
-                <p:column headerText="Cargo">
+
+                <p:column headerText="País" style="width: 6rem">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.pais}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="Pais" value="#{pessoa.pais}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+                <p:column headerText="CEP" style="width: 6rem">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.CEP}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="CEP" value="#{pessoa.CEP}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+                <p:column headerText="Endereço" style="width: 8rem">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.enderco}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="Cidade" value="#{pessoa.enderco}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+                <p:column headerText="Cargo" style="width: 8rem">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{pessoasView.getNomeCargo(pessoa)}"/>
@@ -84,12 +189,17 @@
                 </p:column>
 
 
-                <p:column headerText="Salario">
+                <p:column headerText="Salario" style="width: 5rem">
                     <h:outputText value="#{pessoasView.getSalario(pessoa)}"/>
                 </p:column>
 
-                <p:column>
+                <p:column headerText="Editar" style="width: 4rem">
                     <p:rowEditor editTitle="Editar Cadastro" cancelTitle="Cancelar" saveTitle="Salvar"/>
+                </p:column>
+                <p:column headerText="Deletar" style="width: 4rem">
+                    <p:commandButton immediate="true" update=":form:dados"
+                                     actionListener="#{pessoasView.deletar(pessoa)}" icon="pi pi-times"
+                                     styleClass="rounded-button ui-button-danger ui-button-flat"/>
                 </p:column>
 
             </p:dataTable>

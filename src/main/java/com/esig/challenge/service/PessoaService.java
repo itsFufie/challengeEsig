@@ -16,6 +16,7 @@ public class PessoaService implements Serializable {
     @Inject
     PessoaRepository pessoaRepository;
 
+
     @Inject
     PessoaSalarioRepository pessoaSalarioRepository;
 
@@ -84,6 +85,12 @@ public class PessoaService implements Serializable {
         PessoaSalario salario = pessoaSalarioRepository.readByPessoa(pessoa);
 
         return salario == null ? new PessoaSalario(pessoa) : salario;
+    }
+
+    public void delete(Pessoa pessoa) {
+        pessoaSalarioRepository.delete(pessoaSalarioRepository.readByPessoa(pessoa));
+        pessoaRepository.delete(pessoa);
+
     }
 
     public void setMaxResults(int maxResults) {

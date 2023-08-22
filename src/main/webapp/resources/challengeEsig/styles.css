@@ -1,8 +1,12 @@
-body {
-    background-color: #333333;
-    color: white;
+.div-data-table {
+    margin: 12px auto;
+    width: 90%;
 }
 
-.div-data-table {
-    margin-top: auto;
+.form-nova-pessoa {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
+    margin: 8px auto;
+    width: 90%;
 }
