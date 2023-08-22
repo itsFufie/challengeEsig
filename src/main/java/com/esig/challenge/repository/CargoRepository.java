@@ -5,6 +5,9 @@ import com.esig.challenge.model.Pessoa;
 import com.esig.challenge.model.Vencimento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 
 import java.io.Serializable;
@@ -25,7 +28,13 @@ public class CargoRepository extends AbstractRepository<Cargo> implements Serial
     }
 
     public Cargo semCargo() {
-        TypedQuery<Cargo> query = manager.createQuery("select Cargo() from Cargo where nomeCargo = 'Sem cargo'", Cargo.class);
+        CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+
+        CriteriaQuery<Cargo> criteriaQuery = criteriaBuilder.createQuery(type);
+        Root<Cargo> root = criteriaQuery.from(type);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("nomeCargo"), "Sem cargo"));
+
+        TypedQuery<Cargo> query = manager.createQuery(criteriaQuery);
         return query.getSingleResult();
     }
 

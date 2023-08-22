@@ -131,7 +131,6 @@ public class LoadOnStartUp implements ServletContextListener {
                 }
                 pessoaRepository.save(pessoa);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
