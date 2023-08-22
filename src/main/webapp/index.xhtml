@@ -9,46 +9,92 @@
 <h:head>
     <h:outputStylesheet library="challengeEsig" name="styles.css"/>
     <title> Minha Empresa </title>
+
+    <f:metadata>
+        <f:viewAction action="#{pessoasView.init}"/>
+    </f:metadata>
 </h:head>
 
 <h:body>
-    <h:form>
-        <p:commandButton actionListener="#{pessoasView.calcularSalarios}" value="Calcular Salarios"
-                         update="pessoaDataTable" styleClass="ui-button-raised"/>
+    <h:form id="form">
+        <p:growl id="dados" showDetail="true"/>
+        <div class="div-data-table">
+            <p:dataTable lazy="false" id="pessoaDataTable" value="#{pessoasView.pessoas}" var="pessoa" rows="10"
+                         paginator="true" editable="true" rowEditMode=""
+                         paginatorPosition="both"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {pageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                         rowsPerPageTemplate="10, 50, 100">
+
+                <p:ajax event="rowEdit" listener="#{pessoasView.onRowEdit}" update=":form:dados"/>
+                <f:facet name="header">
+                    Lista de Funcionarios
+                </f:facet>
+                <p:column headerText="Id">
+                    <h:outputText converter="jakarta.faces.Long" value="#{pessoa.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.nome}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText id="modelInputNome" label="Novo Nome" value="#{pessoa.nome}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Email">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.email}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="Novo Email" value="#{pessoa.email}"/>
+                        </f:facet>
+                    </p:cellEditor>
+
+                </p:column>
+
+                <p:column headerText="Telefone">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.telefone}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText label="Novo Telefone" value="#{pessoa.telefone}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+                <p:column headerText="Cargo">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoasView.getNomeCargo(pessoa)}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:selectOneMenu value="#{pessoa.cargo}">
+                                <f:selectItems value="#{pessoasView.cargos}" var="cargo" itemLabel="#{cargo.nomeCargo}"
+                                               itemValue="#{cargo}"/>
+                            </h:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+                <p:column headerText="Salario">
+                    <h:outputText value="#{pessoasView.getSalario(pessoa)}"/>
+                </p:column>
+
+                <p:column>
+                    <p:rowEditor editTitle="Editar Cadastro" cancelTitle="Cancelar" saveTitle="Salvar"/>
+                </p:column>
+
+            </p:dataTable>
+        </div>
     </h:form>
-
-
-    <div class="div-data-table">
-        <p:dataTable id="pessoaDataTable" value="#{pessoasView.pessoas}" var="pessoa" rows="10" paginator="true"
-                     paginatorPosition="both"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {pageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                     rowsPerPageTemplate="10, 50, 100">
-
-            <f:facet name="header">
-                Lista de Funcionarios
-            </f:facet>
-
-            <p:column headerText="Nome">
-                <h:outputText value="#{pessoa.nome}"/>
-            </p:column>
-
-            <p:column headerText="Email">
-                <h:outputText value="#{pessoa.email}"/>
-            </p:column>
-
-            <p:column headerText="Telefone">
-                <h:outputText value="#{pessoa.telefone}"/>
-            </p:column>
-            <p:column headerText="Cargo">
-                <h:outputText value="#{pessoa.cargo.nomeCargo}"/>
-            </p:column>
-            <p:column headerText="Salario">
-                <h:outputText value="#{pessoasView.getSalario(pessoa)}"/>
-            </p:column>
-
-        </p:dataTable>
-    </div>
 
 </h:body>
 </html>

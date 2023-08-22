@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PessoaService implements Serializable {
 
@@ -27,6 +28,10 @@ public class PessoaService implements Serializable {
 
     }
 
+    public Pessoa save(Pessoa pessoa) {
+        return pessoaRepository.save(pessoa);
+    }
+
     public List<Pessoa> readAllWithPages(int pagina) {
         return pessoaRepository.readAllWithPages(pagina, maxResults);
     }
@@ -35,32 +40,50 @@ public class PessoaService implements Serializable {
         return pessoaRepository.readAll();
     }
 
+    public Pessoa findById(Long id) {
+        return pessoaRepository.readById(id);
+    }
+
     public PessoaSalario getSalario(Pessoa pessoa) {
         return pessoaSalarioRepository.readByPessoa(pessoa);
     }
 
     public void calcularSalarios() {
-        List<Pessoa> pessoas = readAll();
+        List<Pessoa> pessoas = readAll().stream().filter(pessoa -> getSalario(pessoa) == null).collect(Collectors.toList());
         System.out.println("Iniciando calculo de salarios de: " + pessoas.size() + " funcionarios");
         for (Pessoa pessoa : pessoas) {
-            Cargo cargo = pessoa.getCargo();
-            if (cargo != null) {
-                List<CargoVencimento> vencimentos = cargoVencimentoRepository.getAllVencimentosOfCargo(cargo);
-                Double salario = (double) 0;
-                for (CargoVencimento vencimento : vencimentos) {
-                    salario += vencimento.getVencimento().getValor();
-                }
-                PessoaSalario pessoaSalario = new PessoaSalario();
-                pessoaSalario.setPessoa(pessoa);
-                pessoaSalario.setSalario(salario);
-                pessoaSalarioRepository.save(pessoaSalario);
-            }
+            recalcularSalario(pessoa);
         }
         System.out.println("Calculo finalizado");
     }
 
     public int getMaxResults() {
         return maxResults;
+    }
+
+    public void saveERecalculeSalario(Pessoa pessoa) {
+        recalcularSalario(pessoaRepository.save(pessoa));
+    }
+
+    public void recalcularSalario(Pessoa pessoa) {
+        Cargo cargo = pessoa.getCargo();
+        if (cargo != null) {
+            List<CargoVencimento> vencimentos = cargoVencimentoRepository.getAllVencimentosOfCargo(cargo);
+            Double salario = (double) 0;
+            for (CargoVencimento vencimento : vencimentos) {
+                salario += vencimento.getVencimento().getValor();
+            }
+            PessoaSalario pessoaSalario = getPessoaSalario(pessoa);
+            pessoaSalario.setPessoa(pessoa);
+            pessoaSalario.setSalario(salario);
+            pessoaSalarioRepository.save(pessoaSalario);
+        }
+    }
+
+    public PessoaSalario getPessoaSalario(Pessoa pessoa) {
+        PessoaSalario salario = pessoaSalarioRepository.readByPessoa(pessoa);
+
+        return salario == null ? new PessoaSalario(pessoa) : salario;
     }
 
     public void setMaxResults(int maxResults) {

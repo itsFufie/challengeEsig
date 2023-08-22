@@ -1,8 +1,10 @@
 package com.esig.challenge.repository;
 
 import com.esig.challenge.model.Cargo;
+import com.esig.challenge.model.Pessoa;
 import com.esig.challenge.model.Vencimento;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 import java.io.Serializable;
@@ -22,5 +24,9 @@ public class CargoRepository extends AbstractRepository<Cargo> implements Serial
         this.type = Cargo.class;
     }
 
+    public Cargo semCargo() {
+        TypedQuery<Cargo> query = manager.createQuery("select Cargo() from Cargo where nomeCargo = 'Sem cargo'", Cargo.class);
+        return query.getSingleResult();
+    }
 
 }

@@ -2,6 +2,7 @@ package com.esig.challenge;
 
 import com.esig.challenge.model.*;
 import com.esig.challenge.repository.*;
+import com.esig.challenge.service.PessoaService;
 import com.opencsv.CSVReader;
 
 import jakarta.servlet.ServletContextEvent;
@@ -26,6 +27,8 @@ public class LoadOnStartUp implements ServletContextListener {
     @Inject
     CargoVencimentoRepository cargoVencimentoRepository;
     @Inject
+    PessoaService pessoaService;
+    @Inject
     MigrationRepository migrationRepository;
 
     public void contextInitialized(ServletContextEvent sce) {
@@ -40,6 +43,7 @@ public class LoadOnStartUp implements ServletContextListener {
         } else {
             System.out.println("Database ja populada, pulando migration inicial!");
         }
+        calcularSalarios();
 
     }
 
@@ -75,6 +79,9 @@ public class LoadOnStartUp implements ServletContextListener {
                 cargo.setNomeCargo(nextLine[1]);
                 cargoRepository.save(cargo);
             }
+            Cargo cargo = new Cargo();
+            cargo.setNomeCargo("Sem cargo");
+            cargoRepository.save(cargo);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,6 +126,8 @@ public class LoadOnStartUp implements ServletContextListener {
                 Long id = obterLong(nextLine[10]);
                 if (id != null) {
                     pessoa.setCargo(cargoRepository.readById(id));
+                } else {
+                    pessoa.setCargo(cargoRepository.semCargo());
                 }
                 pessoaRepository.save(pessoa);
             }
@@ -146,6 +155,14 @@ public class LoadOnStartUp implements ServletContextListener {
         }
 
 
+    }
+
+    public void calcularSalarios() {
+        try {
+            pessoaService.calcularSalarios();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public CSVReader getCsvReader(String resourceName) throws FileNotFoundException {
